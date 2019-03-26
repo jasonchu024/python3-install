@@ -57,8 +57,27 @@ checkSys() {
     [ $(id -u) != "0" ] && { colorEcho ${RED} "Error: You must be root to run this script"; exit 1; }
 
     # check os
-    OS='Raspbian'
-    PACKAGE_MANAGER='apt-get'
+    if [[ -e /etc/redhat-release ]];then
+        if [[ $(cat /etc/redhat-release | grep Fedora) ]];then
+            OS='Fedora'
+            PACKAGE_MANAGER='dnf'
+        else
+            OS='CentOS'
+            PACKAGE_MANAGER='yum'
+        fi
+    elif [[ $(cat /etc/issue | grep Debian) ]];then
+        OS='Debian'
+        PACKAGE_MANAGER='apt-get'
+    elif [[ $(cat /etc/issue | grep Ubuntu) ]];then
+        OS='Ubuntu'
+        PACKAGE_MANAGER='apt-get'
+    elif [[ $(cat /etc/issue | grep Raspbian) ]];then
+        OS='Raspbian'
+        PACKAGE_MANAGER='apt-get'
+    else
+        colorEcho ${RED} "Not support OS, Please reinstall OS and retry!"
+        exit 1
+    fi
 }
 
 commonDependent(){
